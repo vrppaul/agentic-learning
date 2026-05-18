@@ -150,9 +150,21 @@ Regular CREATE INDEX takes SHARE lock (blocks writes). CONCURRENTLY avoids this:
 
 Bulk build uses sort-then-build: scan heap → sort keys → write leaf pages sequentially → build internal pages on top. Much faster than one-by-one insertion. Never blocks reads or writes.
 
+### Metapage — how scans find the root
+Every B-tree has a metapage at block 0. It stores `btm_root` (current root block number), `btm_level` (tree depth), and `btm_fastroot` (shortcut when the true root has only one child). Every scan starts: open index → read block 0 → follow `btm_root`. When the root splits, a new root is created and the metapage is atomically updated. Concurrent readers are never lost.
+
+### How the planner picks an index
+Three stages:
+
+1. **Applicability filter** — cheap reject. Does the WHERE clause reference the leading column? Does the query satisfy a partial index predicate? Does it use the exact expression for an expression index? Indexes that fail are discarded without costing.
+
+2. **Cost estimation** — each surviving index gets costed. Index side: tree depth page reads + leaf range. Heap side: selectivity × reltuples gives rows to fetch, but the key variable is **correlation** (`pg_stats.correlation`, -1.0 to 1.0). High correlation (e.g. `id`, inserted in order, ~1.0) means fetched rows are on consecutive heap pages — nearly sequential I/O. Low correlation (e.g. `score`, random, ~0.0) means rows are scattered — random I/O at `random_page_cost` (4.0). Same selectivity, very different cost. The Mackert-Lohman formula estimates distinct pages touched: `~2*B*N / (2*B+N)`. Each index type provides its own cost function via the `amcostestimate` hook — the planner doesn't know B-tree internals directly.
+
+3. **Path competition** — every applicable index becomes a path. These compete against Seq Scan, other index scans, and Bitmap paths (which can combine multiple indexes via BitmapAnd/BitmapOr). The planner keeps Pareto-optimal paths by cost and sort order — a slightly more expensive index scan that produces ORDER BY order can win by eliminating a Sort node.
+
 ### Tools built
 - `pgvis index tree <name>` — B-tree overview with "what's inside a page" explanation
-- `pgvis index page <name> {root|leaf|internal|N}` — physical page layout with every field explained
+- `pgvis index page <name> {meta|root|leaf|internal|N}` — physical page layout with every field explained (meta shows the metapage at block 0)
 - `pgvis index lookup <name> <value>` — full lookup trace with visual diagrams and MVCC check
 - `pgvis index range <name> <lo> <hi>` — range scan trace through leaf linked list
 
