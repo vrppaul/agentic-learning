@@ -94,14 +94,13 @@ Detailed findings and retro for each chapter in `chapters/`:
 4. [Transactions & Basic Concurrency](chapters/03-transactions.md) ✅
 5. [Postgres Architecture & Query Pipeline](chapters/04-architecture.md) ✅
 6. [SQL Parsing Internals](chapters/04b-parsing-internals.md) (4b) ✅
-7. [Query Execution & EXPLAIN](chapters/05-query-execution.md) — *next*
-8. Join Internals (5b)
-8. Indexes (user perspective)
-9. MVCC under the hood
-10. Vacuum & bloat
-11. WAL
-12. Isolation levels & OCC
-13. Index internals
+7. [Query Execution & EXPLAIN](chapters/05-query-execution.md) ✅
+8. [Join Internals](chapters/05b-join-internals.md) (5b) ✅
+9. [Indexes](chapters/06-indexes.md) ✅
+10. [MVCC Under the Hood](chapters/07-mvcc-internals.md) ✅
+11. Vacuum & bloat
+12. WAL
+13. Isolation levels & OCC
 14. Replication
 15. PgBouncer
 16. Partitioning, tablespaces & sharding
@@ -113,7 +112,7 @@ Detailed findings and retro for each chapter in `chapters/`:
 
 ## Tools
 
-- `tools/pgvis/` — PostgreSQL page visualizer (Python, Click, Rich, psycopg3)
+- `tools/pgvis/` — PostgreSQL internals visualizer (Python, Click, Rich, psycopg3)
   - `pgvis page <table> <N> [--all] [--no-data]` — heap page layout with infomask flags (hint bits, FROZEN)
   - `pgvis fsm <table> [--tree]` — free space map
   - `pgvis vm <table>` — visibility map
@@ -121,6 +120,12 @@ Detailed findings and retro for each chapter in `chapters/`:
   - `pgvis locks` — lock contention and blocking
   - `pgvis clog [start end] [--last N]` — transaction commit status (CLOG)
   - `pgvis sql "QUERY"` / `pgvis sql -i` — pretty SQL output / interactive REPL with tx state
+  - `pgvis explain "SQL"` — annotated EXPLAIN with cost breakdowns and strategy explanations
+  - `pgvis join <type> <algo>` — interactive step-by-step join algorithm slideshow
+  - `pgvis index tree <name>` — B-tree overview (depth, pages per level, sample entries)
+  - `pgvis index page <name> {meta|root|leaf|internal|N}` — physical page layout (metapage, leaf, internal)
+  - `pgvis index lookup <name> <value>` — full lookup trace with visual diagrams and MVCC check
+  - `pgvis index range <name> <lo> <hi>` — range scan trace through leaf linked list
 - `tools/sqlparse/` — SQL parsing pipeline (Go, pg_query_go)
   - `sqlparse parse "SQL"` — parse with real Postgres parser (pg_query_go)
   - `sqlparse lex "SQL"` — tokenize with custom lexer

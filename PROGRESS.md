@@ -2,7 +2,7 @@
 
 ## Current Focus
 
-**PostgreSQL Deep Dive** (`modules/00-postgresql/`) — Chapters 1–6 complete. Next: Chapter 7 (MVCC Under the Hood) or Chapter 8 (Vacuum & Bloat).
+**PostgreSQL Deep Dive** (`modules/00-postgresql/`) — Chapters 1–7 complete. Next: Chapter 8 (Vacuum & Bloat).
 
 ## Completed
 
@@ -33,6 +33,9 @@ Join algorithms visualized step by step: Nested Loop (O(N×M)), Hash Join (build
 ### Chapter 6: Indexes ✅ (2026-05-14)
 B-tree internals: page layout (item pointers → index tuples, high key, special area), tree structure (depth 3 for 500K rows, fan-out ~350), lookup trace (root → internal → leaf → heap → MVCC). Metapage at block 0 (btm_root, btm_level, fastroot). How the planner picks an index: applicability filter → cost estimation (correlation modulates random vs sequential heap I/O) → path competition. Index-only scans + visibility map. Multi-column leftmost prefix rule. Partial indexes (skip writes for non-matching rows). Index types: Hash (O(1) but loses everything else), BRIN (min/max per block range, tiny), GIN (inverted for arrays/JSONB). Write amplification, MVCC interaction (no xmin/xmax in indexes, ghost entries). CREATE INDEX CONCURRENTLY (sort-then-build, two-pass, never blocks writes). Built `pgvis index` tools: tree, page (with metapage view), lookup, range.
 
+### Chapter 7: MVCC Under the Hood ✅ (2026-05-20)
+MVCC mechanics beyond chapter 3: tuple lifecycle on pages (ctid chains, dead tuples, slot reuse), HOT updates (HEAP_ONLY, HOT_UPDATED, KEYS_UPDATED flags — skip index maintenance when non-indexed columns change), full visibility algorithm (xmin/xmax + CLOG + hint bits + snapshot — "committed is not visible"), READ COMMITTED vs REPEATABLE READ snapshot pinning and VACUUM blocking, freezing (FROZEN flag bypasses xmin check, autovacuum thresholds, wraparound emergency), subtransactions (savepoints, ORMs creating them silently, 64-slot overflow cliff), multi-xact (FOR SHARE shared locks, XMAX_IS_MULTI when two transactions lock the same row). Fixed pgvis page to decode t_infomask2 flags.
+
 ## Next Up
 
-- Chapter 7: MVCC Under the Hood (or Vacuum & Bloat)
+- Chapter 8: Vacuum & Bloat

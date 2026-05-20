@@ -11,8 +11,14 @@ INFOMASK_FLAGS = [
     (0x0400, "XMAX_COMMITTED", "green"),
     (0x0800, "XMAX_ABORTED", "red"),
     (0x0080, "XMAX_LOCK_ONLY", "magenta"),
+    (0x1000, "XMAX_IS_MULTI", "magenta"),
     (0x2000, "UPDATED", "yellow"),
+]
+
+INFOMASK2_FLAGS = [
+    (0x2000, "KEYS_UPDATED", "red"),
     (0x4000, "HOT_UPDATED", "yellow"),
+    (0x8000, "HEAP_ONLY", "yellow"),
 ]
 
 
@@ -233,8 +239,11 @@ def _add_tuple_section(
         p.add(meta)
 
         infomask = entry.get("t_infomask", 0) or 0
+        infomask2 = entry.get("t_infomask2", 0) or 0
         flags = _decode_infomask(infomask)
-        if flags:
+        flags2 = [(name, style) for bit, name, style in INFOMASK2_FLAGS if infomask2 & bit]
+        all_flags = flags + flags2
+        if all_flags:
             fl = Text()
             fl.append(f"  {'':>6}    ", style="dim")
             fl.append("│  ", style="dim")
@@ -243,11 +252,12 @@ def _add_tuple_section(
                 fl.append("FROZEN", style="cyan bold")
                 remaining = [(name, style) for bit, name, style in INFOMASK_FLAGS
                              if bit not in (0x0100, 0x0200) and infomask & bit]
+                remaining += flags2
                 for name, style in remaining:
                     fl.append(f"  {name}", style=style)
             else:
                 first_flag = True
-                for name, style in flags:
+                for name, style in all_flags:
                     if not first_flag:
                         fl.append("  ", style="dim")
                     fl.append(name, style=style)
