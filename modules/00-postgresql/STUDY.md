@@ -98,7 +98,7 @@ Detailed findings and retro for each chapter in `chapters/`:
 8. [Join Internals](chapters/05b-join-internals.md) (5b) ✅
 9. [Indexes](chapters/06-indexes.md) ✅
 10. [MVCC Under the Hood](chapters/07-mvcc-internals.md) ✅
-11. Vacuum & bloat
+11. [Vacuum & Bloat](chapters/08-vacuum-and-bloat.md) ✅
 12. WAL
 13. Isolation levels & OCC
 14. Replication

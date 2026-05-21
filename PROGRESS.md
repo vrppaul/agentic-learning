@@ -2,7 +2,7 @@
 
 ## Current Focus
 
-**PostgreSQL Deep Dive** (`modules/00-postgresql/`) — Chapters 1–7 complete. Next: Chapter 8 (Vacuum & Bloat).
+**PostgreSQL Deep Dive** (`modules/00-postgresql/`) — Chapters 1–8 complete. Next: Chapter 9 (WAL & Crash Recovery).
 
 ## Completed
 
@@ -36,6 +36,9 @@ B-tree internals: page layout (item pointers → index tuples, high key, special
 ### Chapter 7: MVCC Under the Hood ✅ (2026-05-20)
 MVCC mechanics beyond chapter 3: tuple lifecycle on pages (ctid chains, dead tuples, slot reuse), HOT updates (HEAP_ONLY, HOT_UPDATED, KEYS_UPDATED flags — skip index maintenance when non-indexed columns change), full visibility algorithm (xmin/xmax + CLOG + hint bits + snapshot — "committed is not visible"), READ COMMITTED vs REPEATABLE READ snapshot pinning and VACUUM blocking, freezing (FROZEN flag bypasses xmin check, autovacuum thresholds, wraparound emergency), subtransactions (savepoints, ORMs creating them silently, 64-slot overflow cliff), multi-xact (FOR SHARE shared locks, XMAX_IS_MULTI when two transactions lock the same row). Fixed pgvis page to decode t_infomask2 flags.
 
+### Chapter 8: Vacuum & Bloat ✅ (2026-05-21)
+VACUUM internals: three-phase operation (heap scan → index cleanup → heap reclaim), visibility map (2-bit bitmap, _vm fork, enables page skipping and index-only scans), free space map (tree-of-trees with binary max-heaps, _fsm fork, O(log N) free page lookup). Autovacuum: threshold formula (50 + 20% × reltuples), worker limits, cost-based delay, why it falls behind on large tables. VACUUM variants: regular (online, doesn't shrink), FREEZE (freeze all tuples), FULL (exclusive lock, full rewrite). maintenance_work_mem controls batch size for multi-pass index scans. Production monitoring via pg_stat_user_tables.
+
 ## Next Up
 
-- Chapter 8: Vacuum & Bloat
+- Chapter 9: WAL & Crash Recovery

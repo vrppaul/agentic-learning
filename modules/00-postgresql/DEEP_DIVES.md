@@ -23,3 +23,5 @@ Topics we encountered during study but deferred for later hands-on exploration. 
 - **Background writer policy** — how it picks which dirty pages to flush and when. → [Ch 2](chapters/02-shared-buffers.md#open-questions)
 - **MVCC and indexes** — index entries have no xmin/xmax, dead entries accumulate until VACUUM, HOT updates skip index maintenance, index bloat. Cover in MVCC chapter. → [Ch 6](chapters/06-indexes.md)
 - **CREATE INDEX CONCURRENTLY** — two-pass scan, no exclusive lock, how it works under the hood. → [Ch 6](chapters/06-indexes.md)
+- **Physical file layout on disk** — see how database/table/index folders look, how pages are stored in files, segment files for tables >1 GB, fork files (_vm, _fsm), pg_relation_filepath to actual bytes. → [Ch 1](chapters/01-physical-storage.md)
+- **B-tree self-balancing** — page splits in detail, how the root moves to a different page, why metapage is needed as indirection, split point selection, concurrent readers during split. → [Ch 6](chapters/06-indexes.md)
