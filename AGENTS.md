@@ -67,6 +67,10 @@ Each module gets its own `STUDY.md` that evolves through three phases: **Before*
 - **Accuracy over simplicity.** Wrong diagrams teach wrong mental models. If a sign is ≥ not ≤, if an item pointer doesn't contain the key value, get it right. Simplify the presentation, not the facts.
 - **Step-by-step slideshow with ← → navigation** is the preferred format for algorithm/traversal visualizations (joins, index lookups, range scans). Pre-compute all frames, let the user control the pace.
 
+## Git Rules
+
+- **Never commit unless the user explicitly asks.** Don't commit after building tools, finishing sections, or wrapping up. Wait for "commit", "let's commit", or similar.
+
 ## Conventions
 
 - **Numbering**: modules are numbered `00`, `01`, `02`... in the order they're completed (not a dependency order)

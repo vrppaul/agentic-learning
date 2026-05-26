@@ -99,7 +99,7 @@ Detailed findings and retro for each chapter in `chapters/`:
 9. [Indexes](chapters/06-indexes.md) ✅
 10. [MVCC Under the Hood](chapters/07-mvcc-internals.md) ✅
 11. [Vacuum & Bloat](chapters/08-vacuum-and-bloat.md) ✅
-12. WAL
+12. [WAL & Crash Recovery](chapters/09-wal.md) ✅
 13. Isolation levels & OCC
 14. Replication
 15. PgBouncer

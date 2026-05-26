@@ -50,6 +50,16 @@ Status markers: `[ ]` not started · `[~]` in progress · `[x]` done
 - Write a Go benchmark suite hitting each with identical workloads
 - CAP theorem in practice: observe what happens during network partitions
 
+### [ ] Distributed Databases & Consensus
+- Why single-node databases can't just be "split" across hosts — the fundamental problems (consistency, coordination, partial failure)
+- Consensus protocols: Raft from scratch in Go — leader election, log replication, safety guarantees
+- Two-phase commit (2PC): how distributed transactions work, why they're slow, the coordinator failure problem
+- CAP theorem deeply: consistency vs availability during network partitions, real examples
+- Distributed KV store: build one in Go using Raft — put/get/delete across a 3-node cluster
+- CockroachDB or TiDB architecture: how they layer SQL on top of distributed KV (Raft groups, range splits, distributed query execution)
+- Vector clocks, hybrid logical clocks — ordering events without a global clock
+- Sharding strategies: hash vs range, rebalancing, hotspots
+
 ---
 
 ## Messaging & Event Systems

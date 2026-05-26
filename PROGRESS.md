@@ -2,7 +2,7 @@
 
 ## Current Focus
 
-**PostgreSQL Deep Dive** (`modules/00-postgresql/`) — Chapters 1–8 complete. Next: Chapter 9 (WAL & Crash Recovery).
+**PostgreSQL Deep Dive** (`modules/00-postgresql/`) — Chapters 1–9 complete. Next: Chapter 10 (Isolation Levels & OCC).
 
 ## Completed
 
@@ -39,6 +39,9 @@ MVCC mechanics beyond chapter 3: tuple lifecycle on pages (ctid chains, dead tup
 ### Chapter 8: Vacuum & Bloat ✅ (2026-05-21)
 VACUUM internals: three-phase operation (heap scan → index cleanup → heap reclaim), visibility map (2-bit bitmap, _vm fork, enables page skipping and index-only scans), free space map (tree-of-trees with binary max-heaps, _fsm fork, O(log N) free page lookup). Autovacuum: threshold formula (50 + 20% × reltuples), worker limits, cost-based delay, why it falls behind on large tables. VACUUM variants: regular (online, doesn't shrink), FREEZE (freeze all tuples), FULL (exclusive lock, full rewrite). maintenance_work_mem controls batch size for multi-pass index scans. Production monitoring via pg_stat_user_tables.
 
+### Chapter 9: WAL & Crash Recovery ✅ (2026-05-26)
+Write-ahead logging: why it exists (atomicity + performance), the write-ahead rule, WAL record structure (header, block refs, main data, resource managers), FPI for torn page protection (73% of WAL volume on first write after checkpoint), COMMIT = WAL fsync, checkpoints (REDO point, recovery window, tradeoffs), crash recovery (replay from checkpoint, LSN comparison, idempotent), WAL segments (16 MB files, recycling), wal_level (minimal/replica/logical). Built pgvis wal tools: show, lsn, checkpoint, segments.
+
 ## Next Up
 
-- Chapter 9: WAL & Crash Recovery
+- Chapter 10: Isolation Levels & OCC

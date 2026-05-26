@@ -8,5 +8,6 @@ from pgvis.commands.locks import locks
 from pgvis.commands.page import page
 from pgvis.commands.sql import sql
 from pgvis.commands.vm import vm
+from pgvis.commands.wal import wal
 
-__all__ = ["buffers", "clog", "explain", "fsm", "index", "join", "locks", "page", "sql", "vm"]
+__all__ = ["buffers", "clog", "explain", "fsm", "index", "join", "locks", "page", "sql", "vm", "wal"]
