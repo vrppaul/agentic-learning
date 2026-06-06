@@ -9,5 +9,6 @@ from pgvis.commands.page import page
 from pgvis.commands.sql import sql
 from pgvis.commands.vm import vm
 from pgvis.commands.wal import wal
+from pgvis.commands.wire import wire
 
-__all__ = ["buffers", "clog", "explain", "fsm", "index", "join", "locks", "page", "sql", "vm", "wal"]
+__all__ = ["buffers", "clog", "explain", "fsm", "index", "join", "locks", "page", "sql", "vm", "wal", "wire"]

@@ -100,9 +100,10 @@ Detailed findings and retro for each chapter in `chapters/`:
 10. [MVCC Under the Hood](chapters/07-mvcc-internals.md) ✅
 11. [Vacuum & Bloat](chapters/08-vacuum-and-bloat.md) ✅
 12. [WAL & Crash Recovery](chapters/09-wal.md) ✅
-13. Isolation levels & OCC
-14. Replication
-15. PgBouncer
+13a. [Isolation Levels](chapters/10-isolation.md) ✅
+13b. [Optimistic Concurrency Control](chapters/10b-occ.md) ✅
+14. [Replication](chapters/11-replication.md) ✅
+15. [Connections & PgBouncer](chapters/12-connections.md) ✅
 16. Partitioning, tablespaces & sharding
 17. Postgres under fire
 18. Breaking Postgres

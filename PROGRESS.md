@@ -2,7 +2,7 @@
 
 ## Current Focus
 
-**PostgreSQL Deep Dive** (`modules/00-postgresql/`) — Chapters 1–9 complete. Next: Chapter 10 (Isolation Levels & OCC).
+**PostgreSQL Deep Dive** (`modules/00-postgresql/`) — Chapters 1–12 complete.
 
 ## Completed
 
@@ -42,6 +42,18 @@ VACUUM internals: three-phase operation (heap scan → index cleanup → heap re
 ### Chapter 9: WAL & Crash Recovery ✅ (2026-05-26)
 Write-ahead logging: why it exists (atomicity + performance), the write-ahead rule, WAL record structure (header, block refs, main data, resource managers), FPI for torn page protection (73% of WAL volume on first write after checkpoint), COMMIT = WAL fsync, checkpoints (REDO point, recovery window, tradeoffs), crash recovery (replay from checkpoint, LSN comparison, idempotent), WAL segments (16 MB files, recycling), wal_level (minimal/replica/logical). Built pgvis wal tools: show, lsn, checkpoint, segments.
 
+### Chapter 10: Isolation Levels ✅ (2026-05-27)
+Three isolation levels with practical tradeoffs: READ COMMITTED (snapshot per statement, default, maximum concurrency), REPEATABLE READ (snapshot per transaction, catches same-row write conflicts via xmax), SERIALIZABLE (SSI — tracks read/write dependencies with SIREAD locks, catches write skew). Demonstrated each anomaly live: non-repeatable read, write skew. SSI internals: SIREAD locks, rw-conflict edges, dangerous structures (cycles). FOR UPDATE as pessimistic alternative — visualized lock contention with pgvis locks.
+
+### Chapter 10b: Optimistic Concurrency Control ✅ (2026-05-27)
+Pessimistic vs optimistic tradeoff. FOR UPDATE overhead: modifies tuple header (xmax + XMAX_LOCK_ONLY), dirties page, generates WAL. Version column pattern: read version → compute → UPDATE WHERE version = N. Retry storms under high contention (~5% threshold). Retry strategies: exponential backoff, jitter, limits. Why distributed systems prefer app-level OCC over SSI (cross-service, precise, explicit, flexible). Architecture first — short transactions regardless of concurrency strategy.
+
+### Chapter 11: Replication ✅ (2026-06-01)
+Streaming replication as continuous WAL replay. Base backup (fuzzy copy + WAL consistency). Replication slots, WAL retention. Hot standby: query conflicts (VACUUM vs standby queries), hot_standby_feedback. Sync vs async tradeoffs. Failover with pg_promote(). Logical replication (publication/subscription, CDC foundation). PITR (base backup + WAL archive + target timestamp). Hands-on: Docker primary+replica, data flowing, failover, async data loss demonstration.
+
+### Chapter 12: Connections & PgBouncer ✅ (2026-06-06)
+Connection lifecycle (TCP + forked process, startup handshake, SCRAM-SHA-256). Wire protocol (simple and extended, built pgvis wire tool showing raw bytes). Python adapters (psycopg2 libpq wrapper vs psycopg3 pure Python). Gunicorn + SQLAlchemy (per-process pools, sync vs async workers, preload fork problem). PgBouncer (transaction mode, what breaks). Cloud SQL architecture (auth proxy ≠ pooler, built-in pooling = managed PgBouncer). Connection sizing math (qps × query_time, 2-3× CPU cores).
+
 ## Next Up
 
-- Chapter 10: Isolation Levels & OCC
+- Partitioning, tablespaces & sharding, or other topics

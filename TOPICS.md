@@ -59,6 +59,20 @@ Status markers: `[ ]` not started · `[~]` in progress · `[x]` done
 - CockroachDB or TiDB architecture: how they layer SQL on top of distributed KV (Raft groups, range splits, distributed query execution)
 - Vector clocks, hybrid logical clocks — ordering events without a global clock
 - Sharding strategies: hash vs range, rebalancing, hotspots
+- Distributed transactions: 2PC limitations, why holding locks across services is dangerous
+- Saga pattern: choreography vs orchestration, compensating transactions, failure handling
+- Outbox pattern: reliable event publishing from a database transaction
+- Distributed locks: Redis-based (Redlock), ZooKeeper, why to avoid them when possible
+- Idempotency: designing operations that are safe to retry, idempotency keys
+
+### [ ] Change Data Capture (CDC)
+- What CDC is and why it exists — streaming database changes to external systems
+- PostgreSQL logical decoding as the foundation
+- Debezium: architecture, connectors, how it reads WAL via logical replication slots
+- Outbox pattern with CDC: reliable event publishing without distributed transactions
+- CDC to Kafka: schema registry, ordering guarantees, exactly-once semantics
+- CDC to data warehouses / analytics: keeping read replicas and materialized views in sync
+- Operational concerns: slot management, WAL retention, lag monitoring
 
 ---
 
@@ -183,6 +197,11 @@ Status markers: `[ ]` not started · `[~]` in progress · `[x]` done
 - Set up SSO across multiple services via a shared identity provider
 - Session propagation, single logout
 
+### [ ] Cryptographic Protocols — Implement from Scratch
+- SCRAM-SHA-256: implement the full handshake in Go (client + server side). HMAC, PBKDF2, salting, channel binding. Used by PostgreSQL, MongoDB, XMPP.
+- TLS handshake: trace and understand each step (ClientHello, ServerHello, key exchange, certificate verification). Not implement TLS itself, but build understanding of what Wireshark shows.
+- Implement HMAC, PBKDF2, SHA-256 from the spec to understand what the higher-level protocols use.
+
 ### [ ] mTLS
 - Generate CA, server certs, client certs
 - Enforce mutual TLS between Go services
@@ -192,6 +211,12 @@ Status markers: `[ ]` not started · `[~]` in progress · `[x]` done
 ---
 
 ## Networking & Linux
+
+### [ ] Low-Level Data Representation
+- Endianness: big-endian (network byte order) vs little-endian (x86). Why it matters for wire protocols, file formats, cross-architecture communication. PostgreSQL wire protocol uses big-endian, heap tuples use the host's native endianness.
+- Integer encoding: fixed-width vs variable-length (varint/protobuf). Two's complement for signed integers.
+- IEEE 754 floating point: how floats are stored, why 0.1 + 0.2 ≠ 0.3, implications for financial data (use NUMERIC, not FLOAT).
+- Text encoding: ASCII, UTF-8, the relationship between client_encoding and server_encoding in PostgreSQL.
 
 ### [ ] Linux Networking Internals
 - Network namespaces: isolate and connect network stacks
@@ -204,6 +229,19 @@ Status markers: `[ ]` not started · `[~]` in progress · `[x]` done
 - Trace syscalls, network packets, scheduling decisions
 - Build a simple observability tool with libbpf + Go
 - Understand how Cilium uses eBPF for networking and security
+
+---
+
+## Python Web Stack Internals
+
+### [ ] Gunicorn + SQLAlchemy Deep Dive
+- Gunicorn worker types: sync, gthread, gevent/eventlet — how each handles concurrency
+- Process model: prefork, preload, post_fork hooks, worker lifecycle
+- SQLAlchemy engine and pool: per-process pool, pool_size, max_overflow, pool_recycle, pool_pre_ping
+- Connection lifecycle: creation, checkout, return, disposal, what RESET ALL does
+- The fork problem: shared sockets after preload, engine.dispose() fix
+- Optimal configuration: matching pool_size to worker concurrency, total connections to PostgreSQL
+- Monitoring: pool statistics, overflow events, connection checkout time
 
 ---
 

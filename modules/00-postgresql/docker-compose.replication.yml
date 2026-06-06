@@ -1,0 +1,53 @@
+services:
+  primary:
+    image: postgres:18
+    container_name: pg-repl-primary
+    environment:
+      POSTGRES_USER: study
+      POSTGRES_PASSWORD: study
+      POSTGRES_DB: study
+    ports:
+      - "5440:5432"
+    volumes:
+      - repl_primary:/var/lib/postgresql
+      - ./init.sql:/docker-entrypoint-initdb.d/01-init.sql
+      - ./init-replication.sh:/docker-entrypoint-initdb.d/02-replication.sh
+    command:
+      - postgres
+      - -c
+      - shared_preload_libraries=pg_stat_statements
+      - -c
+      - wal_level=replica
+      - -c
+      - max_wal_senders=3
+      - -c
+      - hot_standby_feedback=on
+
+  replica:
+    image: postgres:18
+    container_name: pg-repl-replica
+    environment:
+      PGPASSWORD: study
+      PGDATA: /var/lib/postgresql/18/docker
+    ports:
+      - "5441:5432"
+    volumes:
+      - repl_replica:/var/lib/postgresql
+    depends_on:
+      - primary
+    entrypoint: >
+      bash -c "
+        if [ ! -f /var/lib/postgresql/18/docker/PG_VERSION ]; then
+          echo 'Taking base backup from primary...'
+          mkdir -p /var/lib/postgresql/18/docker
+          chown postgres:postgres /var/lib/postgresql/18/docker
+          chmod 700 /var/lib/postgresql/18/docker
+          until pg_isready -h primary -U study; do sleep 1; done
+          gosu postgres pg_basebackup -h primary -U study -D /var/lib/postgresql/18/docker -Fp -Xs -R -P
+        fi
+        exec gosu postgres postgres -c hot_standby=on -D /var/lib/postgresql/18/docker
+      "
+
+volumes:
+  repl_primary:
+  repl_replica:
