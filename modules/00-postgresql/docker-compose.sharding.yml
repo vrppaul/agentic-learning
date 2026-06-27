@@ -1,0 +1,40 @@
+# Sharding lab — 1 coordinator + 2 shard nodes on one network.
+# Coordinator holds foreign tables / the partitioned parent; shards hold real data.
+# Within the `shardnet` network, nodes reach each other by service name
+# (coordinator, shard1, shard2) on port 5432. Host ports are 5441-5443.
+services:
+  coordinator:
+    image: postgres:18
+    container_name: shard-coordinator
+    environment:
+      POSTGRES_USER: study
+      POSTGRES_PASSWORD: study
+      POSTGRES_DB: study
+    ports:
+      - "5441:5432"
+    networks: [shardnet]
+
+  shard1:
+    image: postgres:18
+    container_name: shard-node1
+    environment:
+      POSTGRES_USER: study
+      POSTGRES_PASSWORD: study
+      POSTGRES_DB: study
+    ports:
+      - "5442:5432"
+    networks: [shardnet]
+
+  shard2:
+    image: postgres:18
+    container_name: shard-node2
+    environment:
+      POSTGRES_USER: study
+      POSTGRES_PASSWORD: study
+      POSTGRES_DB: study
+    ports:
+      - "5443:5432"
+    networks: [shardnet]
+
+networks:
+  shardnet:

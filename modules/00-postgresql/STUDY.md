@@ -104,12 +104,11 @@ Detailed findings and retro for each chapter in `chapters/`:
 13b. [Optimistic Concurrency Control](chapters/10b-occ.md) ✅
 14. [Replication](chapters/11-replication.md) ✅
 15. [Connections & PgBouncer](chapters/12-connections.md) ✅
-16. Partitioning, tablespaces & sharding
-17. Postgres under fire
-18. Breaking Postgres
-19. Writing a PostgreSQL extension
-20. TOAST deep dive
-21. Triggers & the rule system
+16. [Partitioning & Tablespaces](chapters/13-partitioning.md) ✅
+17. [Sharding](chapters/14-sharding.md) ⏸ PAUSED — §1–§2 done (fdw + pushdown), §3 theory written; deferred, resume at §3 practice
+18. [Under Fire — Stress, Failure & Recovery](chapters/15-stress-and-failure.md) ✅ — **finale** (combines "under fire" + "breaking Postgres")
+
+_Module ends at Ch 18. Deferred as optional future explorations: Writing a PostgreSQL extension, TOAST deep dive, Triggers & the rule system._
 
 ## Tools
 

@@ -2,7 +2,7 @@
 
 ## Current Focus
 
-**PostgreSQL Deep Dive** (`modules/00-postgresql/`) — Chapters 1–12 complete.
+**PostgreSQL Deep Dive — COMPLETE** (`modules/00-postgresql/`). 14 chapters of internals from physical storage to stress/failure. Sharding (Ch 17) intentionally paused; TOAST / triggers / extensions dropped. Ready to move to the next module (candidate: Domain-Driven Design).
 
 ## Completed
 
@@ -54,6 +54,17 @@ Streaming replication as continuous WAL replay. Base backup (fuzzy copy + WAL co
 ### Chapter 12: Connections & PgBouncer ✅ (2026-06-06)
 Connection lifecycle (TCP + forked process, startup handshake, SCRAM-SHA-256). Wire protocol (simple and extended, built pgvis wire tool showing raw bytes). Python adapters (psycopg2 libpq wrapper vs psycopg3 pure Python). Gunicorn + SQLAlchemy (per-process pools, sync vs async workers, preload fork problem). PgBouncer (transaction mode, what breaks). Cloud SQL architecture (auth proxy ≠ pooler, built-in pooling = managed PgBouncer). Connection sizing math (qps × query_time, 2-3× CPU cores).
 
+### Chapter 13: Partitioning & Tablespaces ✅ (2026-06-10)
+Use-case driven, hands-on. RANGE for time-series + retention (routing on write, pruning on read, `DETACH`/`DROP` = O(1) data expiry vs vacuum-heavy `DELETE`). LIST for multi-tenant/region (multi-value partitions, DEFAULT catch-all + its scan-and-lock tradeoff when adding partitions later). HASH for even spread (plain modulo, NOT consistent hashing; prunes on `=`/`IN` only, never ranges). Tablespaces for hot/cold tiering (`pg_tblspc` symlink farm, `SET TABLESPACE` moves heap but not index, physical rewrite under ACCESS EXCLUSIVE lock). Key lesson: partition key must match query patterns or you're slower than unpartitioned. No tool built — `\d+`/`tableoid`/`EXPLAIN` already make partitioning legible. Sharding split out into its own chapter.
+
+### Chapter 17: Sharding ⏸ PAUSED (2026-06-17)
+Started then deferred — least immediately useful for now. Covered §1 (why/when/cost, the scaling ladder, broken single-node guarantees) and §2 (`postgres_fdw` hands-on: four objects, transparent cross-instance query, predicate/column pushdown verified via `Remote SQL`, the no-2PC gap). §3 (partitioning + FDW = distributed table) has full theory but no practice. Lab `docker-compose.sharding.yml` (3 nodes) is reproducible. Resume at §3 practice. See `chapters/14-sharding.md`.
+
+### Chapter 18: Under Fire — Stress, Failure & Recovery ✅ (finale, 2026-06-21)
+Capstone combining "under fire" + "breaking Postgres". **Part A (hands-on):** lock queue (blocked DDL freezes compatible reads; `pg_blocking_pids`, `lock_timeout`), deadlocks (cycle vs chain, victim+retry), hot-row contention (built Go load generator `stress/`; 4.3× spread-vs-contended; negative scaling 8→64 workers; deep OS dive into process states / context switches / futexes / LWLocks / fsync), connection overload (throughput hump via pgbench + Little's Law `tps = concurrency/latency`), cascading failure (Little's Law on the pool). **Part B:** crash recovery hands-on (`kill -9` → WAL replay; durability+atomicity proven, REDO-only + MVCC hides uncommitted); disk-full / txid-wraparound / corruption as theory. See `chapters/15-stress-and-failure.md`. **PostgreSQL module COMPLETE.**
+
 ## Next Up
 
-- Partitioning, tablespaces & sharding, or other topics
+- **New module: Domain-Driven Design (DDD)** — candidate next topic (Pavel's call). Different flavor from the systems deep-dives: software-design methodology. Decide scope/format (Go-based modeling? a worked domain?) before starting, then create `modules/NN-ddd/` + a STUDY/chapter plan (per the chapter-planning rule).
+- Sharding (Ch 17) deferred — resume later at §3 practice if desired.
+- Other deferred PG topics: TOAST, triggers & rule system, writing an extension.

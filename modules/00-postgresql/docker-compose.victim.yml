@@ -1,0 +1,19 @@
+# Disposable "victim" Postgres for Part B (Breaking Postgres) destructive experiments:
+# kill -9, disk-full, corruption. Own volume + port so it never touches the main pg-study lab.
+# Bring up:   docker compose -p pgvictim -f docker-compose.victim.yml up -d
+# Tear down:  docker compose -p pgvictim -f docker-compose.victim.yml down -v
+services:
+  victim:
+    image: postgres:18
+    container_name: pg-victim
+    environment:
+      POSTGRES_USER: study
+      POSTGRES_PASSWORD: study
+      POSTGRES_DB: study
+    ports:
+      - "5444:5432"
+    volumes:
+      - victimdata:/var/lib/postgresql
+
+volumes:
+  victimdata:
